@@ -161,7 +161,7 @@ app.get('/addcomment/:userName/:comment', (req, res) => {
 		.query(query);
 	}).then((result) => {
 		sql.close();
-		return res.send(`Comments added against user_id: ${user_name}`);
+		return res.send(`Comments added against user name: '${user_name}'`);
 	}).catch((err) => {
 		console.dir(err);
 		if(err.number === 547 && err.class === 16) {
