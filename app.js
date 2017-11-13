@@ -78,9 +78,11 @@ app.get('/login/:user_name/:password', (req, res) => {
 	});
 });
 
-app.get('/comments', (req, res) => {
+app.get('/comments/:id', (req, res) => {
 	sql.close();
-	var query = `SELECT u.email, u.user_name, c.comments FROM comments AS c JOIN users AS u ON u.user_name = c.user_name;`;
+	var id = req.params.id;
+	// var query = `SELECT u.email, u.user_name, c.comments FROM comments AS c JOIN users AS u ON u.user_name = c.user_name;`;
+	var query = `SELECT * FROM comments WHERE Prop_id='${id}'`;
 	sql.connect(DbConnectionString).then((pool) => {
 		return pool.request()
 		.query(query);
@@ -101,7 +103,8 @@ app.get("/name/:name", (req, res) => {
 	sql.close();
 	var name = req.params.name;
 	// var query = `SELECT top 300 Prop_id, Owner_name, Own_Code FROM Owners WHERE (Owner_name LIKE '%${name}%')`;
-	var query = `select top 300 Prop_id, Owner_name, Own_Code from names`;
+	// var query = `select top 300 Prop_id, Owner_name, Own_Code from names`;
+	var query = `SELECT TOP 300 p.Prop_id, o.Owner_name, p.Incareof, p.Own_city, p.Own_state, p.Own_zip, p.Prop_bal, p.Hldr_name FROM Owners AS o JOIN PropertiesRange1 AS p ON o.Prop_id = p.Prop_id WHERE o.Owner_name LIKE '%${name}%'`;
 	sql.connect(DbConnectionString).then((pool) => {
 		return pool.request()
 		// .query(`SELECT top 2 Prop_id, Owner_name, Own_Code FROM Owners WHERE (Owner_name LIKE '%${name}%');`);
@@ -151,11 +154,12 @@ app.get('/id/:id', (req, res) => {
 	});
 });
 
-app.get('/addcomment/:userName/:comment', (req, res) => {
+app.get('/addcomment/:userName/:id/:comment', (req, res) => {
 	sql.close();
 	var user_name = req.params.userName;
+	var id = req.params.id;
 	var comment = req.params.comment;
-	var query = `INSERT INTO comments (user_name, comments) VALUES ('${user_name}', '${comment}')`;
+	var query = `INSERT INTO comments (Prop_id, user_name, comments) VALUES ('${id}', '${user_name}', '${comment}')`;
 	sql.connect(DbConnectionString).then((pool) => {
 		return pool.request()
 		.query(query);
